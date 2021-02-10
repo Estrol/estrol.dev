@@ -63,6 +63,7 @@ p.ref {
 	font-size: 36%;
 	color: #c5c5c5;
 	line-height: 1.4;
+	max-width: 100;
 }
 
 /* To Navigation Style */
