@@ -1,9 +1,60 @@
-SELECT mhs.nama_mhs, count(ambilmk.kodeMK) as total_mk 
-	FROM ambilmk INNER JOIN mhs ON mhs.nim = ambilmk.nim
-	WHERE ambilmk.kodeMK IN (SELECT kodeMK from mk)
-	GROUP BY mhs.nim;
+<?php
+// Memanggil file koneksi.php
+include_once("koneksi.php");
 
-SELECT mhs.nama_mhs, mk.namaMK, nilai FROM ambilmk
-	INNER JOIN mhs ON mhs.nim = ambilmk.nim
-	INNER JOIN mk ON mk.kodeMK = ambilmk.kodeMK
-	WHERE ambilmk.nilai = (SELECT max(nilai) from ambilmk);
+// Syntax untuk mengambil semua data dari table mahasiswa
+$result = mysqli_query($con, "SELECT * FROM mahasiswa ");
+?>
+<html>
+
+<head>
+    <title>Halaman Utama</title>
+</head>
+
+<body>
+    <a href="index.php">Kembali Ke Menu Utama</a>
+    <form action="" method="GET" style="margin-top: 1em">
+        <input style="padding:1em 2em; width:80%;" type="text" name="cari_nim" placeholder="Cari Data Berdasarkan NIM">
+    </form>
+
+    <?php if (isset($_GET['cari_nim'])) : ?>
+
+        <?php
+        $cari_nim = $_GET['cari_nim'];
+        $result = mysqli_query($con, "SELECT mahasiswa.nim, mata_kuliah.kode, khs.nilai FROM khs, mahasiswa, mata_kuliah WHERE mahasiswa.nim = '$cari_nim' and mata_kuliah.id = khs.id_matkul and mahasiswa.id = khs.id_mhs");
+        ?>
+
+        <?php if ($result->num_rows > 0) : ?>
+            <table width='80%' border=1>
+                <tr>
+                    <th>NIM</th>
+                    <th>Kode Mata Kuliah</th>
+                    <th>Nilai</th>
+                </tr>
+                <?php
+                while ($user_data = mysqli_fetch_array($result)) {
+                    echo "<tr>";
+                    echo "<td>" . $user_data['nim'] . "</td>";
+                    echo "<td>" . $user_data['kode'] . "</td>";
+                    echo "<td>" . $user_data['nilai'] . "</td>";
+                }
+                ?>
+            </table>
+        <?php else : ?>
+            <table width='80%' border=1>
+                <tr>
+                    <th>NIM</th>
+                    <th>Kode Mata Kuliah</th>
+                    <th>Nilai</th>
+                </tr>
+                <tr>
+                    <td colspan="3" align="center">Data tidak di temukan!</td>
+                </tr>
+            </table>
+        <?php endif; ?>
+
+
+    <?php endif; ?>
+</body>
+
+</html>
